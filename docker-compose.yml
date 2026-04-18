@@ -8,7 +8,7 @@ services:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'https://gitlab.krem.lan'
 
-        # 1. Disable the monitoring stack to save RAM
+        # Monitoring
         prometheus_monitoring['enable'] = false
         prometheus['enable'] = false
         alertmanager['enable'] = false
@@ -17,20 +17,21 @@ services:
         postgres_exporter['enable'] = false
         gitlab_exporter['enable'] = false
 
-        # 2. Tune Puma Web Server
+        # Puma Web Server
         # Setting workers to 0 runs Puma in single mode.
-        # Perfect for homelabs, drastically reduces memory.
         puma['worker_processes'] = 0
         puma['min_threads'] = 1
         puma['max_threads'] = 4
 
-        # 3. Tune Sidekiq Background Jobs
-        # Reduce concurrency from the default (often 20+) down to 10.
+        # Sidekiq Background Jobs
         sidekiq['max_concurrency'] = 10
 
-        # 4. Tune PostgreSQL shared buffers
-        # Prevents Postgres from reserving too much RAM.
+        # PostgreSQL
         postgresql['shared_buffers'] = "256MB"
+
+        # Gitlab OCI
+        registry_external_url 'https://gitlab.krem.lan:5050'
+
     ports:
       - '80:80'
       - '443:443'
@@ -40,6 +41,17 @@ services:
       - 'gitlab-logs:/var/log/gitlab'
       - 'gitlab-data:/var/opt/gitlab'
     shm_size: '256m'
+      # dns:
+      #   build:
+      #     context: dns
+      #   container_name: dns
+      #   restart: unless-stopped
+      #   ports:
+      #     - '53/tcp:53/tcp'
+      #     - '53/udp:53/udp'
+      #   volumes:
+      #     - "dns/named.conf:/etc/bind/named.conf"
+
 volumes:
   gitlab-config:
   gitlab-logs:
