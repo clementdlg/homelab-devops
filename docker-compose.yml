@@ -1,23 +1,31 @@
 services:
-  # proxy:
-  #   container_name: proxy
-  #   image: nginx:1.29
-  #   restart: unless-stopped
-  #   cap_add:
-  #     - NET_BIND_SERVICE
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #     - ./nginx/conf.d:/etc/nginx/conf.d:ro
-  #       # - ./nginx/ssl:/etc/nginx/ssl:ro
-  #   ports:
-  #     # DNS
-  #     - "53:53/tcp"
-  #     - "53:53/udp"
-  #     # WEB
-  #     - "80:80/tcp"
-  #     - "443:443/tcp"
-  #     # DB
-  #     - "3306:3306/tcp"
+  proxy:
+    container_name: proxy
+    image: nginx:1.29
+    restart: unless-stopped
+    cap_add:
+      - NET_BIND_SERVICE
+    volumes:
+      # configs
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/stream.conf.d/:/etc/nginx/stream.conf.d/
+      # certificates
+      - /etc/ssl/certs/krem.lan.crt:/etc/ssl/certs/krem.lan.crt
+      - /etc/ssl/private/krem.lan.key:/etc/ssl/private/krem.lan.key
+    ports:
+      # DNS
+      - "53:53/tcp"
+      - "53:53/udp"
+      # WEB
+      - "80:80/tcp"
+      - "443:443/tcp"
+      # DB
+      - "3306:3306/tcp"
+    networks:
+      homelab-net:
+        ipv4_address: 172.30.0.10
+
 
   # dns:
   #   container_name: dns
@@ -36,6 +44,18 @@ services:
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'https://gitlab.krem.lan'
+
+        # NGINX config (embedded)
+        # edge ssl
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+
+        # same for registry
+        registry_nginx['listen_port'] = 5500
+        registry_nginx['listen_https'] = false
+
+        # trust the headers from nginx
+        nginx['real_ip_trusted_addresses'] = ["172.30.0.10"]
 
         # Monitoring
         prometheus_monitoring['enable'] = false
@@ -58,12 +78,8 @@ services:
         # PostgreSQL
         postgresql['shared_buffers'] = "256MB"
 
-        # Gitlab OCI
-        registry_external_url 'https://gitlab.krem.lan:5050'
-
     ports:
       - "80:80"
-      - "443:443"
       - "22:22"
     volumes:
       - "gitlab-config:/etc/gitlab"
@@ -75,3 +91,9 @@ volumes:
   gitlab-config:
   gitlab-logs:
   gitlab-data:
+
+networks:
+  homelab-net:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
