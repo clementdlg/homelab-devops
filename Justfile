@@ -19,4 +19,13 @@ renew-cert:
         -newkey {{cert_key_type}} \
         -keyout {{cert_key_out}} \
         -out {{cert_out}} \
-        -subj "/C=FR/ST=Ile-de-France/L=Paris/O=Krem DevOps/OU=IT/CN=*.krem.lan"
+        -subj "/C=FR/ST=Ile-de-France/L=Paris/O=Krem DevOps/OU=IT/CN=*.krem.lan" \
+        -addext "subjectAltName=DNS:*.krem.lan,DNS:gitlab.krem.lan,DNS:oci.krem.lan"
+
+# set the container stack up and follow the logs 
+up:
+	docker compose up -d && docker compose logs -f
+
+# set the container stack down
+down:
+    docker compose down

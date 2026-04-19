@@ -26,15 +26,19 @@ services:
       homelab-net:
         ipv4_address: 172.30.0.10
 
-
-  # dns:
-  #   container_name: dns
-  #   build:
-  #     context: dns/
-  #   restart: unless-stopped
-  #   dns: 127.0.0.1
-  #   volumes:
-  #     - ./dns/config:/etc/bind/
+  dns:
+    container_name: dns
+    build:
+      context: dns/
+    restart: unless-stopped
+    dns: 127.0.0.1
+    volumes:
+      - ./dns/config:/etc/bind/
+    # ports:
+    #   - '53:53/udp'
+    networks:
+      homelab-net:
+        ipv4_address: 172.30.0.11
 
   gitlab:
     container_name: gitlab
@@ -43,7 +47,8 @@ services:
     hostname: 'gitlab.krem.lan'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.krem.lan'
+        external_url "https://gitlab.krem.lan"
+        registry_external_url "https://oci.krem.lan"
 
         # NGINX config (embedded)
         # edge ssl
@@ -55,7 +60,7 @@ services:
         registry_nginx['listen_https'] = false
 
         # trust the headers from nginx
-        nginx['real_ip_trusted_addresses'] = ["172.30.0.10"]
+        nginx['real_ip_trusted_addresses'] = ["172.30.0.10", "10.0.0.0/8"]
 
         # Monitoring
         prometheus_monitoring['enable'] = false
@@ -78,14 +83,17 @@ services:
         # PostgreSQL
         postgresql['shared_buffers'] = "256MB"
 
-    ports:
-      - "80:80"
-      - "22:22"
+    # ports:
+      # - "80:80"
+      # - "22:22"
     volumes:
       - "gitlab-config:/etc/gitlab"
       - "gitlab-logs:/var/log/gitlab"
       - "gitlab-data:/var/opt/gitlab"
     shm_size: "256m"
+    networks:
+      homelab-net:
+        ipv4_address: 172.30.0.12
 
 volumes:
   gitlab-config:
