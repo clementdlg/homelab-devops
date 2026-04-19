@@ -1,7 +1,36 @@
 services:
+  # proxy:
+  #   container_name: proxy
+  #   image: nginx:1.29
+  #   restart: unless-stopped
+  #   cap_add:
+  #     - NET_BIND_SERVICE
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/conf.d:/etc/nginx/conf.d:ro
+  #       # - ./nginx/ssl:/etc/nginx/ssl:ro
+  #   ports:
+  #     # DNS
+  #     - "53:53/tcp"
+  #     - "53:53/udp"
+  #     # WEB
+  #     - "80:80/tcp"
+  #     - "443:443/tcp"
+  #     # DB
+  #     - "3306:3306/tcp"
+
+  # dns:
+  #   container_name: dns
+  #   build:
+  #     context: dns/
+  #   restart: unless-stopped
+  #   dns: 127.0.0.1
+  #   volumes:
+  #     - ./dns/config:/etc/bind/
+
   gitlab:
-    image: gitlab/gitlab-ce:18.8.9-ce.0
     container_name: gitlab
+    image: gitlab/gitlab-ce:18.8.9-ce.0
     restart: unless-stopped
     hostname: 'gitlab.krem.lan'
     environment:
@@ -33,24 +62,14 @@ services:
         registry_external_url 'https://gitlab.krem.lan:5050'
 
     ports:
-      - '80:80'
-      - '443:443'
-      - '22:22'
+      - "80:80"
+      - "443:443"
+      - "22:22"
     volumes:
-      - 'gitlab-config:/etc/gitlab'
-      - 'gitlab-logs:/var/log/gitlab'
-      - 'gitlab-data:/var/opt/gitlab'
-    shm_size: '256m'
-      # dns:
-      #   build:
-      #     context: dns
-      #   container_name: dns
-      #   restart: unless-stopped
-      #   ports:
-      #     - '53/tcp:53/tcp'
-      #     - '53/udp:53/udp'
-      #   volumes:
-      #     - "dns/named.conf:/etc/bind/named.conf"
+      - "gitlab-config:/etc/gitlab"
+      - "gitlab-logs:/var/log/gitlab"
+      - "gitlab-data:/var/opt/gitlab"
+    shm_size: "256m"
 
 volumes:
   gitlab-config:

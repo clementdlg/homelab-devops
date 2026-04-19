@@ -1,0 +1,17 @@
+;
+; BIND data file for local loopback interface
+;
+$ORIGIN krem.lan.
+$TTL	604800
+@	IN	SOA	dns.svc.krem.lan. admin.krem.lan. (
+			      2		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+
+@	IN	NS	dns.svc.krem.lan.
+dns.svc.krem.lan.    IN    A    10.10.0.10
+dns    IN    CNAME    dns.svc.krem.lan.
+svc    IN    A    10.10.0.10
