@@ -29,3 +29,10 @@ up:
 # set the container stack down
 down:
     docker compose down
+
+build-dns:
+	#!/bin/sh
+	TAG="oci.krem.lan/krem/homelab/dns:v0.0.1"
+	# docker login oci.krem.lan -u clement
+	docker build --provenance=false -t "$TAG" dns/
+	docker push "$TAG"

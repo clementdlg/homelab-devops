@@ -83,9 +83,9 @@ services:
         # PostgreSQL
         postgresql['shared_buffers'] = "256MB"
 
-    # ports:
+    ports:
       # - "80:80"
-      # - "22:22"
+      - "22:22"
     volumes:
       - "gitlab-config:/etc/gitlab"
       - "gitlab-logs:/var/log/gitlab"
