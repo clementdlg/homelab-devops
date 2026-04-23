@@ -4,7 +4,7 @@
 $ORIGIN krem.lan.
 $TTL	604800
 @	IN	SOA	dns.krem.lan. admin.krem.lan. (
-			      2		; Serial
+			      6		; Serial
 			 604800		; Refresh
 			  86400		; Retry
 			2419200		; Expire
@@ -12,8 +12,15 @@ $TTL	604800
 ;
 
 @	IN	NS	dns.krem.lan.
+; public network
+gateway    IN    A    10.10.0.254
 dns       IN    A    10.10.0.10
 oci       IN    A    10.10.0.10
 gitlab    IN    A    10.10.0.10
-gitlab    IN    A    10.10.0.10
-prox      IN    A    10.10.0.3
+docker01    IN    A    10.10.0.10
+prox      IN    A    10.10.0.100
+compute01      IN    A    10.10.0.101
+
+; internal network
+controller01      IN    A    10.20.0.11
+compute01      IN    A    10.20.0.101
