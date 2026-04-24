@@ -1,6 +1,6 @@
-;
-; BIND data file for local loopback interface
-;
+;                                    ;
+;    ; Zone : krem.lan ;             ;
+;                                    :
 $ORIGIN krem.lan.
 $TTL	604800
 @	IN	SOA	dns.krem.lan. admin.krem.lan. (
@@ -9,18 +9,27 @@ $TTL	604800
 			  86400		; Retry
 			2419200		; Expire
 			 604800 )	; Negative Cache TTL
-;
-
+;                                    ;
+;    ; DNS Server ;                  ;
+;                                    :
 @	IN	NS	dns.krem.lan.
-; public network
-gateway    IN    A    10.10.0.254
-dns       IN    A    10.10.0.10
-oci       IN    A    10.10.0.10
-gitlab    IN    A    10.10.0.10
-docker01    IN    A    10.10.0.10
-prox      IN    A    10.10.0.100
+;                                    ;
+;    ; Public Network ;              ;
+;                                    :
+prox           IN    A    10.10.0.1
+docker01       IN    A    10.10.0.10
+controller01   IN    A    10.20.0.101
 compute01      IN    A    10.10.0.101
-
-; internal network
-controller01      IN    A    10.20.0.11
+gateway        IN    A    10.10.0.254
+;                                    ;
+;    ; Docker ;                      ;
+;                                    :
+dns            IN    A    10.10.0.10
+oci            IN    A    10.10.0.10
+gitlab         IN    A    10.10.0.10
+;                                    ;
+;    ; Internal Network ;            ;
+;                                    ;
+prox           IN    A    10.20.0.1
+controller01   IN    A    10.20.0.100
 compute01      IN    A    10.20.0.101
